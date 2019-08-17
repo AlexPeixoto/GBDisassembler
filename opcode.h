@@ -8,8 +8,8 @@
 class Opcode
 {
     private:
-    enum class OP{
-        NOP, LD, INC, DEC, RLCA, ADD, RRCA, STOP, RLA, JR, RRA, CPL, SCF, DAA, CCF, HALT, ADD, SUB, ADC, SBC, AND, XOR, OR, CP, RET, POP, JP, PUSH, RST, CB, CALL, RETI, LDH, DI, EI
+    enum class INSTRUCTION{
+        NOP, LD, INC, DEC, RLCA, ADD, RRCA, STOP, RLA, JR, RRA, CPL, SCF, DAA, CCF, HALT, SUB, ADC, SBC, AND, XOR, OR, CP, RET, POP, JP, PUSH, RST, CB, CALL, RETI, LDH, DI, EI
     };
 
     enum class PARAMETER_TYPE{
@@ -19,7 +19,8 @@ class Opcode
         A8,
         A16,
         R8,
-        REG
+        REG,
+        JMP
     };
     enum class REG{
         B,
@@ -29,9 +30,21 @@ class Opcode
         H,
         L,
         HL,
+        HLP,
+        HLM,
         A,
         BC,
-        SP
+        SP,
+        DE
+    };
+
+    //It is passed as a parameter (type JUMP)
+    enum class JMP{
+        NZ = (static_cast<int>(REG::DE) + 1),
+        Z,
+        NC,
+        C
+
     };
     //Reg to string
     const std::vector<std::string> registers = {"B", "C", "D", "E", "H", "L", "HL", "A"};
@@ -39,17 +52,18 @@ class Opcode
     
     //This can, in theory, be initialized in compile time
     struct Operations{
-        Operations(OP opcode, std::string description, 
+        Operations(uint16_t opcode, INSTRUCTION instruction,
                    PARAMETER_TYPE type_1 = PARAMETER_TYPE::NONE, PARAMETER_TYPE type_2 = PARAMETER_TYPE::NONE,
-                    uint16_t parameter_1 = 0, uint16_t parameter_2 =0){
+                   uint16_t parameter_1 = 0, uint16_t parameter_2 =0){
             this->opcode=opcode;
-            this->description=description;
+            this->instruction = instruction;
             this->type[0] = type_1;
             this->type[1] = type_2;
             this->parameter[0] = parameter_1;
             this->parameter[1] = parameter_2;
         }
-        OP opcode;
+        uint16_t opcode;
+        INSTRUCTION instruction;
         std::string description;
         
         //I will pass the reg as a parameter as well

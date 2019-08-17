@@ -3,24 +3,24 @@
 Opcode::Opcode(){
     operationListTop = 
     {
-        {0x00, "NOP "}, 
-        {0x01, "LD BC, ", PARAMETER_TYPE::D16}, 
-        {0x02, "LD (BC), A"}, 
-        {0x03, "INC BC"}, 
-        {0x04, "INC B"}, 
-        {0x05, "DEC B"}, 
-        {0x06, "LD B", PARAMETER_TYPE::D8}, 
-        {0x07, "RLCA"}, 
+        {0x00, OP::LD}, 
+        {0x01, OP::LD, PARAMETER_TYPE::REG, PARAMETER_TYPE::D16, static_cast<int>(REG::BC)}, 
+        {0x02, OP::LD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::BC), static_cast<int>(REG::A)}, 
+        {0x03, OP::INC, PARAMETER_TYPE::REG, PARAMETER_TYPE::NONE, static_cast<int>(REG::BC)}, 
+        {0x04, OP::INC, PARAMETER_TYPE::REG, PARAMETER_TYPE::NONE, static_cast<int>(REG::B)}, 
+        {0x05, OP::DEC, PARAMETER_TYPE::REG, PARAMETER_TYPE::NONE, static_cast<int>(REG::B)}, 
+        {0x06, OP::LD, PARAMETER_TYPE::REG, PARAMETER_TYPE::NONE, static_cast<int>(REG::B)}, 
+        {0x07, OP::RLCA}, 
         //TRICK TO SUBSTITUTE THE %% FOR THE PARAMETER
-        {0x08, "LD %%, SP", PARAMETER_TYPE::A16}, 
-        {0x09, "ADD HL, BC"}, 
-        {0x0A, "LD A, (BC)"}, 
-        {0x0B, "DEC BC"}, 
-        {0x0C, "INC C"}, 
-        {0x0D, "DEC C"}, 
-        {0x0E, "LD C, ", PARAMETER_TYPE::D8}, 
-        {0x0F, "RRCA"}, 
-       
+        {0x08, OP::LD, PARAMETER_TYPE::A16, PARAMETER_TYPE::REG, 0, static_cast<int>(REG::SP)}, 
+        {0x09, OP::ADD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::HL), static_cast<int>(REG::BC)}, 
+        {0x0A, OP::LD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), static_cast<int>(REG::BC)}, 
+        {0x0B, OP::DEC, PARAMETER_TYPE::REG, PARAMETER_TYPE::NONE, static_cast<int>(REG::BC)}, 
+        {0x0C, OP::INC, PARAMETER_TYPE::REG, PARAMETER_TYPE::NONE, static_cast<int>(REG::C)}, 
+        {0x0D, OP::DEC, PARAMETER_TYPE::REG, PARAMETER_TYPE::NONE, static_cast<int>(REG::C)}, 
+        {0x0E, OP::LD, PARAMETER_TYPE::REG, PARAMETER_TYPE::D8, static_cast<int>(REG::C)}, 
+        {0x0E, OP::RRCA},  
+       /*
         {0x10, "NOP "}, 
         {0x11, "LD BC, ", PARAMETER_TYPE::D16}, 
         {0x12, "LD BC, ", PARAMETER_TYPE::D16}, 
@@ -71,7 +71,7 @@ Opcode::Opcode(){
         {0x3D, "LD BC, ", PARAMETER_TYPE::D16}, 
         {0x3E, "LD BC, ", PARAMETER_TYPE::D16}, 
         {0x3F, "LD BC, ", PARAMETER_TYPE::D16}
-
+        */
     };
 }
 

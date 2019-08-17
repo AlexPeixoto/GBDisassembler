@@ -8,6 +8,10 @@
 class Opcode
 {
     private:
+    enum class OP{
+        NOP, LD, INC, DEC, RLCA, ADD, RRCA, STOP, RLA, JR, RRA, CPL, SCF, DAA, CCF, HALT, ADD, SUB, ADC, SBC, AND, XOR, OR, CP, RET, POP, JP, PUSH, RST, CB, CALL, RETI, LDH, DI, EI
+    };
+
     enum class PARAMETER_TYPE{
         NONE,
         D8,
@@ -25,7 +29,9 @@ class Opcode
         H,
         L,
         HL,
-        A
+        A,
+        BC,
+        SP
     };
     //Reg to string
     const std::vector<std::string> registers = {"B", "C", "D", "E", "H", "L", "HL", "A"};
@@ -33,19 +39,25 @@ class Opcode
     
     //This can, in theory, be initialized in compile time
     struct Operations{
-        Operations(uint8_t opcode, std::string description, PARAMETER_TYPE type = PARAMETER_TYPE::NONE){
+        Operations(OP opcode, std::string description, 
+                   PARAMETER_TYPE type_1 = PARAMETER_TYPE::NONE, PARAMETER_TYPE type_2 = PARAMETER_TYPE::NONE,
+                    uint16_t parameter_1 = 0, uint16_t parameter_2 =0){
             this->opcode=opcode;
             this->description=description;
-            this->type = type;
+            this->type[0] = type_1;
+            this->type[1] = type_2;
+            this->parameter[0] = parameter_1;
+            this->parameter[1] = parameter_2;
         }
-        uint16_t opcode;
+        OP opcode;
         std::string description;
         
-        //There is only a single parameter
-        PARAMETER_TYPE type;
-        uint16_t parameter;
+        //I will pass the reg as a parameter as well
+        PARAMETER_TYPE type[2];
+        uint16_t parameter[2];
         bool invalid;
 
+        //Can always pass 2 parameters, but the functor only might use one or 2
         std::function<void(int16_t*)> executeOpcode;
     };
     //Maps between 0x00 and 0x3F (direct access)

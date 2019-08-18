@@ -186,31 +186,31 @@ Operation Decoder::generateInstruction(unsigned char** PC){
     else if(op >= 0x80 && op <= 0xBF){
         //Tries to map ADD, ADC, SUB, SBC, AND, XOR, OR, CP as a "sequential" range of instructions between 0x80 and 0xBF
         int normalizedOp = (op - 0x80)/8;
-        uint16_t op2Val = getRegisterFromLast4Bits<uint16_t>(op);
+        uint16_t reg = getRegisterFromLast4Bits<uint16_t>(op);
         switch(op){
             case 0:
-                operationToExecute = {op, INSTRUCTION::ADD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), op2Val};
+                operationToExecute = {op, INSTRUCTION::ADD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), reg};
                 break;
             case 1:
-                operationToExecute = {op, INSTRUCTION::ADC, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), op2Val};
+                operationToExecute = {op, INSTRUCTION::ADC, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), reg};
                 break;
             case 2:
-                operationToExecute = {op, INSTRUCTION::SUB, PARAMETER_TYPE::REG,  op2Val};
+                operationToExecute = {op, INSTRUCTION::SUB, PARAMETER_TYPE::REG,  reg};
                 break;
             case 3:
-                operationToExecute = {op, INSTRUCTION::SBC, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), op2Val};
+                operationToExecute = {op, INSTRUCTION::SBC, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), reg};
                 break;
             case 4:
-                operationToExecute = {op, INSTRUCTION::AND, PARAMETER_TYPE::REG,  op2Val};
+                operationToExecute = {op, INSTRUCTION::AND, PARAMETER_TYPE::REG,  reg};
                 break;
             case 5:
-                operationToExecute = {op, INSTRUCTION::XOR, PARAMETER_TYPE::REG,  op2Val};
+                operationToExecute = {op, INSTRUCTION::XOR, PARAMETER_TYPE::REG,  reg};
                 break;
             case 6:
-                operationToExecute = {op, INSTRUCTION::OR, PARAMETER_TYPE::REG,  op2Val};
+                operationToExecute = {op, INSTRUCTION::OR, PARAMETER_TYPE::REG,  reg};
                 break;
             case 7:
-                operationToExecute = {op, INSTRUCTION::CP, PARAMETER_TYPE::REG,  op2Val};
+                operationToExecute = {op, INSTRUCTION::CP, PARAMETER_TYPE::REG,  reg};
                 break;
         }
     }
@@ -224,6 +224,40 @@ Operation Decoder::generateInstruction(unsigned char** PC){
 }
 
 Operation Decoder::getCBInstruction(unsigned char **PC){
+    Operation operationToExecute;
+    unsigned char op = **PC;
+    if(op <= 0x3F){
+        int _op = op/8;
+        int reg = getRegisterFromLast4Bits<uint16_t>(op);
+        switch(_op){
+            case 0:
+                operationToExecute = {op, INSTRUCTION::RLC, PARAMETER_TYPE::REG,  reg};
+            case 1:
+                operationToExecute = {op, INSTRUCTION::RRC, PARAMETER_TYPE::REG,  reg};
+            case 2:
+                operationToExecute = {op, INSTRUCTION::RL, PARAMETER_TYPE::REG,  reg};
+            case 3:
+                operationToExecute = {op, INSTRUCTION::RL, PARAMETER_TYPE::REG,  reg};
+            case 4:
+                operationToExecute = {op, INSTRUCTION::SLA, PARAMETER_TYPE::REG,  reg};
+            case 5:
+                operationToExecute = {op, INSTRUCTION::SRA, PARAMETER_TYPE::REG,  reg};
+            case 6:
+                operationToExecute = {op, INSTRUCTION::SWAP, PARAMETER_TYPE::REG,  reg};
+            case 7:
+                operationToExecute = {op, INSTRUCTION::SRL, PARAMETER_TYPE::REG,  reg};
+        }
+    }
+    else if(op >= 0x40 && op <= 0x7F){
+
+    }
+    else if(op >= 0x80 && op <= 0xBF){
+        
+    }
+    else if(op >= 0xC0 && op <= 0xFF){
+        
+    }
+
     return Operation();
 
 }

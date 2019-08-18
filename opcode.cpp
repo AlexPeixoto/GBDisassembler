@@ -1,7 +1,7 @@
-#include "opcode.h"
+#include "decoder.h"
 #include <sstream>
 
-Opcode::Opcode(){
+Decoder::Decoder(){
     operationListTop = 
     {
         {0x00, INSTRUCTION::NOP}, 
@@ -148,7 +148,7 @@ Opcode::Opcode(){
 }
 
 //Uses https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html as a basis
-unsigned char* Opcode::generateInstruction(unsigned char* PC){
+unsigned char* Decoder::generateInstruction(unsigned char* PC){
     unsigned char op = *PC;
 
     if(op == 0xCB){
@@ -219,4 +219,4 @@ unsigned char* Opcode::generateInstruction(unsigned char* PC){
     throw std::runtime_error("Could not match the opcode");
 }
 
-void Opcode::getCBInstruction(unsigned char *PC){}
+void Decoder::getCBInstruction(unsigned char *PC){}

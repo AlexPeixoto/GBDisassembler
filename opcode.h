@@ -2,10 +2,10 @@
 #include <functional>
 #include <string>
 
-//As of now, this class simulates the opcode execution
-//This class implements the logic to process the opcode, but it will only print the opcode to a device.
+//As of now, this class simulates the decofing step
+//This class implements the logic to process the opcode, and retrieve the necessary parameters for the opcode (if any).
 //This is an initial work for a GB Emulator and an experimentation.
-class Opcode
+class Decoder
 {
     private:
     enum class INSTRUCTION{
@@ -122,7 +122,7 @@ class Opcode
     std::vector<Operations> operationListTop;
     std::vector<Operations> CBOperationList;
 
-    Opcode();
+    Decoder();
 
     unsigned char* generateInstruction(unsigned char *PC);
     void getCBInstruction(unsigned char *PC);

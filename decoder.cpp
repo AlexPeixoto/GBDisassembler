@@ -1,6 +1,9 @@
 #include "decoder.h"
 #include <sstream>
 
+using namespace CPU;
+using CPU::INSTRUCTION;
+
 Decoder::Decoder(){
     operationListTop = 
     {
@@ -148,22 +151,20 @@ Decoder::Decoder(){
 }
 
 //Uses https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html as a basis
-unsigned char* Decoder::generateInstruction(unsigned char* PC){
-    unsigned char op = *PC;
+Operation Decoder::generateInstruction(unsigned char** PC){
+    unsigned char op = **PC;
+    Operation operationToExecute;
 
     if(op == 0xCB){
-
+        *PC++;
+        getCBInstruction(PC);
     }
     else if(op >= 0x00 && op <= 0x3F){
-
+        operationToExecute=operationListBottom.at(op);
     }
     else if(op >=0xC0 && op <= 0xFF){
         int idx = op - 0xC0;
-        if(operationListBottom.at(idx).invalid){
-            std::stringstream errorMessage;
-            errorMessage << "Invalid opcode: " << std::hex << (int)op;
-            throw std::runtime_error(errorMessage.str());
-        }
+        operationToExecute=operationListBottom.at(op);
     }
     
     //LD
@@ -172,51 +173,76 @@ unsigned char* Decoder::generateInstruction(unsigned char* PC){
         
         //On the opcode table there is a pattern where the 8 registers repeat [B,C,D,E,H,L,HL]
         //Instead of checking all the possible operations I can map the range per instructions on specific cases and then "calculate" the registers based on the lower 4 bits
-        int op2Val = getRegisterFromLast4Bits<int>(op);
-        op2 = regToString(op2Val);
+        uint16_t op2Val = getRegisterFromLast4Bits<uint16_t>(op);
         
         //A similar rule applies for the first 4 bits, but I have to divide it by 8 assuming that it starts from 0x00.
-        int normalizedOp = op - 0x40; 
+        uint16_t normalizedOp = op - 0x40; 
         //I know that after every 8 elements I move to the next register (normalized B starts at 0x00, c at 0x08, d at 0x10)
-        int op1Val = normalizedOp/8;
-        op2 = regToString(op2Val);
+        uint16_t op1Val = normalizedOp/8;
         //LD op1, op2
-        return PC++;
+        operationToExecute = {op, INSTRUCTION::LD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, 
+                              op1Val, op2Val};
     }
     else if(op >= 0x80 && op <= 0xBF){
         //Tries to map ADD, ADC, SUB, SBC, AND, XOR, OR, CP as a "sequential" range of instructions between 0x80 and 0xBF
         int normalizedOp = (op - 0x80)/8;
+        uint16_t op2Val = getRegisterFromLast4Bits<uint16_t>(op);
         switch(op){
             case 0:
-                //ADD
+                operationToExecute = {op, INSTRUCTION::ADD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), op2Val};
                 break;
             case 1:
-                //ADC
+                operationToExecute = {op, INSTRUCTION::ADC, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), op2Val};
                 break;
             case 2:
-                //SUB
+                operationToExecute = {op, INSTRUCTION::SUB, PARAMETER_TYPE::REG,  op2Val};
                 break;
             case 3:
-                //SBC
+                operationToExecute = {op, INSTRUCTION::SBC, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), op2Val};
                 break;
             case 4:
-                //AND
+                operationToExecute = {op, INSTRUCTION::AND, PARAMETER_TYPE::REG,  op2Val};
                 break;
             case 5:
-                //XOR
+                operationToExecute = {op, INSTRUCTION::XOR, PARAMETER_TYPE::REG,  op2Val};
                 break;
             case 6:
-                //OR
+                operationToExecute = {op, INSTRUCTION::OR, PARAMETER_TYPE::REG,  op2Val};
                 break;
             case 7:
-                //CP
+                operationToExecute = {op, INSTRUCTION::CP, PARAMETER_TYPE::REG,  op2Val};
                 break;
-            default:
-                throw std::runtime_error("INCORRECT OPCODE SUPPLIED");
         }
-        return PC++;
     }
-    throw std::runtime_error("Could not match the opcode");
+    if(operationToExecute.invalid)
+        throw std::runtime_error("Could not match the opcode");
+
+    //IF operation + opcode is valid, I fill the parameters and return the data structure that defines this operation
+    fillNecessaryParameters(PC, operationToExecute);
+    *PC++; //Increment program counter pointer
+    return operationToExecute;
 }
 
-void Decoder::getCBInstruction(unsigned char *PC){}
+Operation Decoder::getCBInstruction(unsigned char **PC){
+    return Operation();
+
+}
+
+void Decoder::fillNecessaryParameters(unsigned char **PC, Operation& operationToExecute){
+    setParameterPerType(PC, operationToExecute.type[0], operationToExecute.parameter[0]);
+    setParameterPerType(PC, operationToExecute.type[1], operationToExecute.parameter[1]);
+}
+
+void Decoder::setParameterPerType(unsigned char **PC, PARAMETER_TYPE type, uint16_t& parameter){
+    //Start_Number = (Start_Number_High << 8) | (Start_Number_Low & 0xff);
+    if(type >= PARAMETER_TYPE::D8 && type <= PARAMETER_TYPE::R8){
+        parameter = **PC;
+
+    }
+    else if(type >= PARAMETER_TYPE::D8 && type <= PARAMETER_TYPE::R8){
+        //Generate 16 bits variable
+        parameter = **PC;
+        PC++;
+        parameter |= **PC<<8;
+    }
+}

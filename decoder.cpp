@@ -236,6 +236,7 @@ Operation Decoder::getCBInstruction(unsigned char **PC){
     uint16_t bit = ((op - 0x40) / 8) % 8;
     if(op <= 0x3F){
         int _op = op/8;
+        uint16_t reg = getRegisterFromLast4Bits<uint16_t>(op);
         switch(_op){
             case 0:
                 operationToExecute = {op, INSTRUCTION::RLC, PARAMETER_TYPE::REG, reg};

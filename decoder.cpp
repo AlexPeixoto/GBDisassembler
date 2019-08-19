@@ -226,39 +226,42 @@ Operation Decoder::generateInstruction(unsigned char** PC){
 Operation Decoder::getCBInstruction(unsigned char **PC){
     Operation operationToExecute;
     unsigned char op = **PC;
+    uint16_t reg = getRegisterFromLast4Bits<uint16_t>(op);
+    //Used from 0x40 up to 0xff. It always loops from 0 to 7, hence the /8. Also because it covers 0x40 and 0xff I use mod 8 on top of it, so it always stays betwen 0 and 7.
+    //The original intention here was to dublicate this line for each of the 3 if statements 0x40, 0x80, 0xc0 and subtract for each ne of those.
+    uint16_t bit = ((op - 0x40) / 8) % 8;
     if(op <= 0x3F){
         int _op = op/8;
-        int reg = getRegisterFromLast4Bits<uint16_t>(op);
         switch(_op){
             case 0:
-                operationToExecute = {op, INSTRUCTION::RLC, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::RLC, PARAMETER_TYPE::REG, reg};
             case 1:
-                operationToExecute = {op, INSTRUCTION::RRC, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::RRC, PARAMETER_TYPE::REG, reg};
             case 2:
-                operationToExecute = {op, INSTRUCTION::RL, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::RL, PARAMETER_TYPE::REG, reg};
             case 3:
-                operationToExecute = {op, INSTRUCTION::RL, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::RL, PARAMETER_TYPE::REG, reg};
             case 4:
-                operationToExecute = {op, INSTRUCTION::SLA, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::SLA, PARAMETER_TYPE::REG, reg};
             case 5:
-                operationToExecute = {op, INSTRUCTION::SRA, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::SRA, PARAMETER_TYPE::REG, reg};
             case 6:
-                operationToExecute = {op, INSTRUCTION::SWAP, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::SWAP, PARAMETER_TYPE::REG, reg};
             case 7:
-                operationToExecute = {op, INSTRUCTION::SRL, PARAMETER_TYPE::REG,  reg};
+                operationToExecute = {op, INSTRUCTION::SRL, PARAMETER_TYPE::REG, reg};
         }
     }
     else if(op >= 0x40 && op <= 0x7F){
-
+        operationToExecute = {op, INSTRUCTION::BIT, PARAMETER_TYPE::BIT, PARAMETER_TYPE::REG, bit, reg};
     }
     else if(op >= 0x80 && op <= 0xBF){
-        
+        operationToExecute = {op, INSTRUCTION::RES, PARAMETER_TYPE::BIT, PARAMETER_TYPE::REG, bit, reg};
     }
     else if(op >= 0xC0 && op <= 0xFF){
-        
+        operationToExecute = {op, INSTRUCTION::RES, PARAMETER_TYPE::BIT, PARAMETER_TYPE::REG, bit, reg};
     }
 
-    return Operation();
+    return operationToExecute;
 
 }
 

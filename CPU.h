@@ -39,7 +39,8 @@ namespace CPU{
 
         REG,
         JMP,
-        RST
+        RST,
+        BIT
     };
     enum class REG{
         //Preserve this order from B to A as this is the order seen for several instructions

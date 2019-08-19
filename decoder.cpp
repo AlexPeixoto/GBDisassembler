@@ -228,7 +228,7 @@ Operation Decoder::getCBInstruction(unsigned char **PC){
     unsigned char op = **PC;
     if(op <= 0x3F){
         int _op = op/8;
-        int reg = getRegisterFromLast4Bits<uint16_t>(op);
+        uint16_t reg = getRegisterFromLast4Bits<uint16_t>(op);
         switch(_op){
             case 0:
                 operationToExecute = {op, INSTRUCTION::RLC, PARAMETER_TYPE::REG,  reg};

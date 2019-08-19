@@ -7,6 +7,8 @@
 #include "decoder.h"
 #include "stringify.h"
 
+using namespace CPU;
+
 int main(int argc, char** argv){
     if(argc != 2)
         return 1;
@@ -20,7 +22,7 @@ int main(int argc, char** argv){
     }
     size_t fileSize = file.tellg();
     char* data = new char[fileSize];
-    file.seekg (0x100, std::ios::beg);
+    file.seekg (0, std::ios::beg);
 	file.read (data, fileSize);//copy file into memory
     //Read as 16 bits
     /*uint16_t* data16 = reinterpret_cast<uint16_t*>(data);
@@ -28,7 +30,7 @@ int main(int argc, char** argv){
         std::cout << std::setfill('0') << std::setw(4) << std::hex << *byte << std::endl;
     }*/
     unsigned char* begin = reinterpret_cast<unsigned char*>(data);
-    unsigned char* udata = reinterpret_cast<unsigned char*>(data);
+    unsigned char* udata = reinterpret_cast<unsigned char*>(data+0x150);
     //std::reverse(udata, udata + fileSize);
     unsigned char* start = udata;
     CPU::Decoder decoder;
@@ -38,8 +40,15 @@ int main(int argc, char** argv){
         //*udata = htole16(*udata);
         //std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << (int)(*udata) << "  ";
         //(*(&udata))++;
-        
-        std::cout << Disassembly::Stringify::operationToString(decoder.generateInstruction(&udata)) << std::endl;
+        Operation op = decoder.generateInstruction(&udata);
+        std::cout << Disassembly::Stringify::operationToString(op) << std::endl;
+        if(op.instruction == INSTRUCTION::JP){
+            if(op.type[1] == PARAMETER_TYPE::NONE){
+                if(begin + op.parameter[0] < udata)
+                    break;
+                udata = begin + op.parameter[0];
+            }
+        }
 
     }
     /*for(unsigned char* byte = udata; byte != udata+fileSize; byte++){

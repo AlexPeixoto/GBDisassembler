@@ -91,7 +91,7 @@ Decoder::Decoder(){
         {0xC8, INSTRUCTION::RET, PARAMETER_TYPE::REG, static_cast<int>(REG::Z)}, 
         {0xC9, INSTRUCTION::RET}, 
         {0xCA, INSTRUCTION::JP, PARAMETER_TYPE::REG, PARAMETER_TYPE::A16, static_cast<int>(REG::Z)}, 
-        //CB MAPPED SOMEWHERE ELSE
+        {0xCB}, //INVALID //CB MAPPED SOMEWHERE ELSE
         {0xCC, INSTRUCTION::CALL, PARAMETER_TYPE::REG, PARAMETER_TYPE::A16, static_cast<int>(REG::Z)}, 
         {0xCD, INSTRUCTION::CALL, PARAMETER_TYPE::A16}, 
         {0xCE, INSTRUCTION::ADC, PARAMETER_TYPE::REG, PARAMETER_TYPE::D8, static_cast<int>(REG::A)}, 
@@ -188,7 +188,7 @@ Operation Decoder::generateInstruction(unsigned char** PC){
         //Tries to map ADD, ADC, SUB, SBC, AND, XOR, OR, CP as a "sequential" range of instructions between 0x80 and 0xBF
         int normalizedOp = (op - 0x80)/8;
         uint16_t reg = getRegisterFromLast4Bits<uint16_t>(op);
-        switch(op){
+        switch(normalizedOp){
             case 0:
                 operationToExecute = {op, INSTRUCTION::ADD, PARAMETER_TYPE::REG, PARAMETER_TYPE::REG, static_cast<int>(REG::A), reg};
                 break;

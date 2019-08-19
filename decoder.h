@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <functional>
 #include <string>
@@ -16,9 +18,6 @@ class Decoder
     //Maps between 0xC0 and 0XFF
     std::vector<Operation> operationListTop;
 
-    Decoder();
-
-    Operation generateInstruction(unsigned char **PC);
     //Decode CB instructions only
     Operation getCBInstruction(unsigned char **PC);
     //Fills the necessary parameters on the Operation data structure
@@ -32,6 +31,12 @@ class Decoder
     inline T getRegisterFromLast4Bits(uint8_t _v){
         return static_cast< T>((_v & 0x0F) % 0x08);
     }
+
+
+    public:
+    Decoder();
+
+    Operation generateInstruction(unsigned char **PC);;
 };
 
 }

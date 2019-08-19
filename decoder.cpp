@@ -1,5 +1,6 @@
 #include "decoder.h"
 #include <sstream>
+#include <iostream>
 
 using namespace CPU;
 using CPU::INSTRUCTION;
@@ -156,15 +157,15 @@ Operation Decoder::generateInstruction(unsigned char** PC){
     Operation operationToExecute;
 
     if(op == 0xCB){
-        *PC++;
+        *PC+=1;
         getCBInstruction(PC);
     }
     else if(op >= 0x00 && op <= 0x3F){
-        operationToExecute=operationListBottom.at(op);
+        operationToExecute=operationListTop.at(op);
     }
     else if(op >=0xC0 && op <= 0xFF){
         int idx = op - 0xC0;
-        operationToExecute=operationListBottom.at(op);
+        operationToExecute=operationListBottom.at(idx);
     }
     
     //LD
@@ -214,12 +215,15 @@ Operation Decoder::generateInstruction(unsigned char** PC){
                 break;
         }
     }
-    if(operationToExecute.invalid)
-        throw std::runtime_error("Could not match the opcode");
+    if(operationToExecute.invalid){
+        std::stringstream err;
+        err << "Could not match the opcode "<< std::hex << static_cast<uint16_t>(op) << std::endl;
+        throw std::runtime_error(err.str());
+    }
 
     //IF operation + opcode is valid, I fill the parameters and return the data structure that defines this operation
     fillNecessaryParameters(PC, operationToExecute);
-    *PC++; //Increment program counter pointer
+    *PC+=1; //Increment program counter pointer
     return operationToExecute;
 }
 
@@ -273,13 +277,15 @@ void Decoder::fillNecessaryParameters(unsigned char **PC, Operation& operationTo
 void Decoder::setParameterPerType(unsigned char **PC, PARAMETER_TYPE type, uint16_t& parameter){
     //Start_Number = (Start_Number_High << 8) | (Start_Number_Low & 0xff);
     if(type >= PARAMETER_TYPE::D8 && type <= PARAMETER_TYPE::R8){
+        *PC+=1;
         parameter = **PC;
 
     }
-    else if(type >= PARAMETER_TYPE::D8 && type <= PARAMETER_TYPE::R8){
+    else if(type >= PARAMETER_TYPE::D16 && type <= PARAMETER_TYPE::A16){
         //Generate 16 bits variable
+        *PC+=1;
         parameter = **PC;
-        PC++;
+        *PC+=1;
         parameter |= **PC<<8;
     }
 }

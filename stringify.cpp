@@ -38,15 +38,10 @@ std::string Stringify::parameterToString(CPU::PARAMETER_TYPE type, uint16_t para
     ss << "0x" << std::setfill('0') << std::setw(2);
     switch(type){
         case PARAMETER_TYPE::A16:
-            ss << std::hex << parameter;
-            break;
         case PARAMETER_TYPE::A8:
-            ss << std::hex << parameter;
-            break;
         case PARAMETER_TYPE::D16:
-            ss << std::hex << parameter;
-            break;
         case PARAMETER_TYPE::D8:
+        case PARAMETER_TYPE::R8:
             ss << std::hex << parameter;
             break;
         case PARAMETER_TYPE::BIT:

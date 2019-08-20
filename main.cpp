@@ -38,7 +38,7 @@ int main(int argc, char** argv){
         //Print current address
         //std::cout << std::hex << static_cast<uint16_t>(udata - begin) << "\t";
         //*udata = htole16(*udata);
-        //std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << (int)(*udata) << "  ";
+        std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << (int)(udata-begin) << "  ";
         //(*(&udata))++;
         Operation op = decoder.generateInstruction(&udata);
         std::cout << Disassembly::Stringify::operationToString(op) << std::endl;

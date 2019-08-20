@@ -279,8 +279,7 @@ void Decoder::setParameterPerType(unsigned char **PC, PARAMETER_TYPE type, uint1
     //Start_Number = (Start_Number_High << 8) | (Start_Number_Low & 0xff);
     if(type >= PARAMETER_TYPE::D8 && type <= PARAMETER_TYPE::R8){
         *PC+=1;
-        parameter = **PC;
-
+        parameter = static_cast<uint16_t>(**PC);
     }
     else if(type >= PARAMETER_TYPE::D16 && type <= PARAMETER_TYPE::A16){
         //Generate 16 bits variable

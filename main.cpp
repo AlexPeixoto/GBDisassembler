@@ -6,6 +6,7 @@
 
 #include "decoder.h"
 #include "stringify.h"
+#include "cartridgeType.h"
 
 using namespace CPU;
 
@@ -24,17 +25,17 @@ int main(int argc, char** argv){
     char* data = new char[fileSize];
     file.seekg (0, std::ios::beg);
 	file.read (data, fileSize);//copy file into memory
-    //Read as 16 bits
-    /*uint16_t* data16 = reinterpret_cast<uint16_t*>(data);
-    for(uint16_t *byte = data16; byte != data16+fileSize; byte++){
-        std::cout << std::setfill('0') << std::setw(4) << std::hex << *byte << std::endl;
-    }*/
+
+
     unsigned char* begin = reinterpret_cast<unsigned char*>(data);
-    unsigned char* udata = reinterpret_cast<unsigned char*>(data+0x150);
-    //std::reverse(udata, udata + fileSize);
-    unsigned char* start = udata;
+    unsigned char* udata = reinterpret_cast<unsigned char*>(data+0x100);
+    std::vector<CPU::Operation> operationList;
+    
+    //This will be used later to implement the tracing mechanism
+    //32KB, 8 byte per instruction (assuming that there is no operand and data segment)
+    operationList.reserve(32 * 1000 / 8);
     CPU::Decoder decoder;
-    while(udata < start+fileSize){
+    while(udata < begin+0x100+fileSize){
         //Print current address
         //std::cout << std::hex << static_cast<uint16_t>(udata - begin) << "\t";
         //*udata = htole16(*udata);

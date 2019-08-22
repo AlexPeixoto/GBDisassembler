@@ -4,13 +4,20 @@
 
 namespace Memory{
     namespace Cartridge{
-        enum GB_TYPE{
+        enum class GB_TYPE{
+            NONE,
             CGB,
             OGB //Its either gameboy color or "another gameboy"
         };
-        enum GB_FUNCTIONS{ //tells if the rom has super gameboy features
+        enum class GB_FUNCTIONS{ //tells if the rom has super gameboy features
+            NONE,
             GB,
             SGB
+        };
+        enum class GB_DESTINATION{
+            NONE,
+            JAPANESE,
+            NONJAPANESE
         };
 
         class Header{
@@ -31,7 +38,9 @@ namespace Memory{
                 //16KB bank size
                 uint8_t romBankCount;
                 uint8_t ramBankCount;
-                uint8_t destinationCode;
+                GB_DESTINATION destinationCode = GB_DESTINATION::NONE;
+                GB_FUNCTIONS functions = GB_FUNCTIONS::NONE;
+                GB_TYPE type = GB_TYPE::NONE;
 
 
                 void processHeader();

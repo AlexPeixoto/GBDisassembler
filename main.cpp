@@ -37,10 +37,7 @@ int main(int argc, char** argv){
     CPU::Decoder decoder;
     while(udata < begin+0x100+fileSize){
         //Print current address
-        //std::cout << std::hex << static_cast<uint16_t>(udata - begin) << "\t";
-        //*udata = htole16(*udata);
         std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << (int)(udata-begin) << "  ";
-        //(*(&udata))++;
         Operation op = decoder.generateInstruction(&udata);
         std::cout << Disassembly::Stringify::operationToString(op) << std::endl;
         if(op.instruction == INSTRUCTION::JP){
@@ -52,10 +49,6 @@ int main(int argc, char** argv){
         }
 
     }
-    /*for(unsigned char* byte = udata; byte != udata+fileSize; byte++){
-        *byte = htole16(*byte);
-        std::cout << std::setfill('0') << std::setw(2) << std::hex << (int)(*byte) << std::endl;
-    }*/
 
     delete[] data;
     

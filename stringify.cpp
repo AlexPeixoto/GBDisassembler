@@ -79,3 +79,18 @@ std::string Stringify::generateComment(const CPU::Operation& op){
     }
     return line.str();
 }
+
+const std::vector<std::string> Stringify::cartridgeTypeTable = {"NONE", "CGB", "OGB"};
+const std::vector<std::string> Stringify::cartridgeFunctionTable = {"NONE", "GB", "SGB"};
+const std::vector<std::string> Stringify::cartridgeDestinationTable = {"NONE", "JAPANESE", "NON-JAPANESE"};
+
+const std::vector<std::string> Stringify::cartridgeMbcTable = {"NONE", "MBC1", "MBC2", "MMM01", "MBC3", "MBC5", "OTHER"};
+const std::vector<std::string> Stringify::cartridgeRamTable = {"NONE", "RAM", "SRAM"};
+const std::vector<std::string> Stringify::cartridgeBatteryTable = {"NONE", "PRESENT"};
+const std::vector<std::string> Stringify::cartridgeRumbleTable = {"NONE", "PRESENT"};
+const std::vector<std::string> Stringify::cartridgeTimerTable = {"NONE", "PRESENT"};
+
+std::string Stringify::headerToString(const Memory::Cartridge::Header& header){
+    std::stringstream headerString;
+    
+}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "cartridgeType.h"
 
 namespace Memory{
     namespace Cartridge{
@@ -42,6 +43,8 @@ namespace Memory{
                 GB_FUNCTIONS functions = GB_FUNCTIONS::NONE;
                 GB_TYPE type = GB_TYPE::NONE;
 
+                CartridgeType cartridgeType;
+
 
                 void processHeader();
                 void setTitleName();
@@ -52,14 +55,17 @@ namespace Memory{
                 void setRamBankCount();
                 void setDestination();
             public:
-            Header(unsigned char* ptr){
-                this->ptr = ptr;
-            }
+                Header(unsigned char* ptr){
+                    this->ptr = ptr;
+                }
 
-            const char* getRomName();
-            uint16_t getLicense();
-
-            
+                const char* getRomName();
+                uint8_t getRomBankCount();
+                uint8_t getRamBankCount();
+                GB_DESTINATION getDestination();
+                GB_FUNCTIONS getFunctions();
+                GB_TYPE getType();
+                CartridgeType& getCartridgeType();
         
         };
     }

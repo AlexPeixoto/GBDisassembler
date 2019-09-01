@@ -63,3 +63,26 @@ void Header::setDestination(){
     else if(destination == 0x01)
         destinationCode = GB_DESTINATION::NONJAPANESE;
 }
+
+const char* Header::getRomName(){
+    return romName;
+}
+uint8_t Header::getRomBankCount(){
+    return romBankCount;
+}
+uint8_t Header::getRamBankCount(){
+    return ramBankCount;
+}
+GB_DESTINATION Header::getDestination(){
+    return destinationCode;
+}
+GB_FUNCTIONS Header::getFunctions(){
+    return functions;
+}
+GB_TYPE Header::getType(){
+    return type;
+}
+
+CartridgeType& Header::getCartridgeType(){
+    return cartridgeType;
+}

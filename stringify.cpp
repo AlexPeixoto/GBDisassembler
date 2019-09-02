@@ -82,7 +82,7 @@ std::string Stringify::generateComment(const CPU::Operation& op){
 
 const std::vector<std::string> Stringify::cartridgeTypeTable = {"NONE", "CGB", "OGB"};
 const std::vector<std::string> Stringify::cartridgeFunctionTable = {"NONE", "GB", "SGB"};
-const std::vector<std::string> Stringify::cartridgeDestinationTable = {"NONE", "JAPANESE", "NON-JAPANESE"};
+const std::vector<std::string> Stringify::cartridgeDestinationTable = {"JAPANESE", "NON-JAPANESE"};
 
 const std::vector<std::string> Stringify::cartridgeMbcTable = {"NONE", "MBC1", "MBC2", "MMM01", "MBC3", "MBC5", "OTHER"};
 const std::vector<std::string> Stringify::cartridgeRamTable = {"NONE", "RAM", "SRAM"};
@@ -90,7 +90,22 @@ const std::vector<std::string> Stringify::cartridgeBatteryTable = {"NONE", "PRES
 const std::vector<std::string> Stringify::cartridgeRumbleTable = {"NONE", "PRESENT"};
 const std::vector<std::string> Stringify::cartridgeTimerTable = {"NONE", "PRESENT"};
 
-std::string Stringify::headerToString(const Memory::Cartridge::Header& header){
+std::string Stringify::headerToString(Memory::Cartridge::Header& header){
     std::stringstream headerString;
+    headerString << "===========Cartridge heaeder information===========" << std::endl;
+    headerString << "Title: " << header.getRomName() << std::endl;
+    headerString << "Type: " << cartridgeTypeTable[static_cast<int>(header.getType())] << std::endl;
+    headerString << "Function: " << cartridgeFunctionTable[static_cast<int>(header.getFunction())] << std::endl;
+    headerString << "Destination: " << cartridgeDestinationTable[static_cast<int>(header.getDestination())] << std::endl;
     
+    headerString << "Rom bank count: " << (int)header.getRomBankCount() << std::endl;
+    headerString << "Ram bank count: " << (int)header.getRamBankCount() << std::endl;
+
+    headerString << "Memory bank controller: " << cartridgeMbcTable[static_cast<int>(header.getCartridgeType().mbc)] << std::endl;
+    headerString << "Ram type: " << cartridgeRamTable[static_cast<int>(header.getCartridgeType().ram)] << std::endl;
+    headerString << "Battery: " << cartridgeBatteryTable[static_cast<int>(header.getCartridgeType().battery)] << std::endl;
+    headerString << "Rumble: " << cartridgeRumbleTable[static_cast<int>(header.getCartridgeType().rumble)] << std::endl;
+    headerString << "Timer: " << cartridgeTimerTable[static_cast<int>(header.getCartridgeType().timer)] << std::endl;
+
+    return headerString.str();
 }

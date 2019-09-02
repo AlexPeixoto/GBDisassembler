@@ -4,14 +4,14 @@
 using namespace Memory::Cartridge;
 
 void Header::processHeader(){
-    setTitleName();
+    setRomName();
     setType();
     setCatridgeType();
     setRomBankCount();
     setRamBankCount();
     setDestination();
 }
-void Header::setTitleName(){
+void Header::setRomName(){
     std::memcpy(romName, ptr + TITLE_START, 16);
 }
 void Header::setType(){
@@ -22,18 +22,18 @@ void Header::setType(){
 }
 void Header::setFunctions(){
     if(*(ptr + FUNCTIONS_START) == 0x00)
-        functions=GB_FUNCTIONS::GB;
+        function=GB_FUNCTIONS::GB;
     else if(*(ptr + FUNCTIONS_START) == 0x00)
-        functions=GB_FUNCTIONS::SGB;
+        function=GB_FUNCTIONS::SGB;
 }
 void Header::setCatridgeType(){
-    //This should come from cartridge type class
+    cartridgeType.identifyCartridgeType(*(ptr + CARTRIDGE_TYPE_START));
 }
 void Header::setRomBankCount(){
     uint8_t code = (*(ptr + ROM_BANK_COUNT_START));
     //0 - 2, 1 - 4... so shift the bits by 2
     if(code >= 0x00 && code < 0x06){
-        romBankCount = (1 << (code + 2));
+        romBankCount = (1 << (code + 1));
     }
     switch(code){
         case 0x52:
@@ -76,8 +76,8 @@ uint8_t Header::getRamBankCount(){
 GB_DESTINATION Header::getDestination(){
     return destinationCode;
 }
-GB_FUNCTIONS Header::getFunctions(){
-    return functions;
+GB_FUNCTIONS Header::getFunction(){
+    return function;
 }
 GB_TYPE Header::getType(){
     return type;

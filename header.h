@@ -16,7 +16,6 @@ namespace Memory{
             SGB
         };
         enum class GB_DESTINATION{
-            NONE,
             JAPANESE,
             NONJAPANESE
         };
@@ -37,17 +36,17 @@ namespace Memory{
                 
                 char romName[16];
                 //16KB bank size
-                uint8_t romBankCount;
-                uint8_t ramBankCount;
-                GB_DESTINATION destinationCode = GB_DESTINATION::NONE;
-                GB_FUNCTIONS functions = GB_FUNCTIONS::NONE;
+                uint8_t romBankCount=0;
+                uint8_t ramBankCount=0;
+                GB_DESTINATION destinationCode = GB_DESTINATION::JAPANESE;
+                GB_FUNCTIONS function = GB_FUNCTIONS::NONE;
                 GB_TYPE type = GB_TYPE::NONE;
 
                 CartridgeType cartridgeType;
 
 
                 void processHeader();
-                void setTitleName();
+                void setRomName();
                 void setType();
                 void setFunctions();
                 void setCatridgeType();
@@ -57,13 +56,15 @@ namespace Memory{
             public:
                 Header(unsigned char* ptr){
                     this->ptr = ptr;
+                    romName[0]='\0';
+                    processHeader();
                 }
 
                 const char* getRomName();
                 uint8_t getRomBankCount();
                 uint8_t getRamBankCount();
                 GB_DESTINATION getDestination();
-                GB_FUNCTIONS getFunctions();
+                GB_FUNCTIONS getFunction();
                 GB_TYPE getType();
                 CartridgeType& getCartridgeType();
         

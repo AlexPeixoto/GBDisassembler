@@ -47,7 +47,7 @@ namespace Memory{
             }
 
             void identifyCartridgeType(uint8_t type){
-                if(type == 0x01 || type == 0x08 || type == 0x09){
+                if(type == 0x00 || type == 0x08 || type == 0x09){
                     mbc=MBC::NONE;
                    setNoControllerFeatures(type);
                 }

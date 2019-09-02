@@ -8,7 +8,7 @@
 namespace Disassembly{
 class Stringify{
     public:
-        static std::string headerToString(const Memory::Cartridge::Header& header);
+        static std::string headerToString(Memory::Cartridge::Header& header);
         static std::string operationToString(const CPU::Operation& op);
     private:
         static std::string opcodeToString(CPU::INSTRUCTION instruction);

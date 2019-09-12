@@ -44,8 +44,6 @@ unsigned char* Tracer::addCall(unsigned char* begin, const CPU::Operation& op){
  * This will be stored on a vector that is big enough to store 32KB program and this will be used later to generate the output code.
  */
 void Tracer::decodeTracing(unsigned char* begin, size_t fileSize){
-    //std::vector<std::pair<bool, CPU::Operation>> operationList(31754, {false, {}});
-    
     //Mark the end
     const unsigned char* end = begin+0x100+fileSize;
     //Pointer that will hold the current address being processed

@@ -43,6 +43,10 @@ int main(int argc, char** argv){
     Memory::Cartridge::Header header(begin);
     std::cout << Disassembly::Stringify::headerToString(header) << std::endl;
 
+    if(header.getCartridgeType().mbc != Memory::Cartridge::MBC::NONE){
+        std::cerr << "Only roms without memory controller are supported!";
+    }
+
     Tracer tracer;
     tracer.decodeTracing(begin, fileSize);
     auto operationList = tracer.getOperationList();
